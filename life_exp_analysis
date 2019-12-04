@@ -1,0 +1,20 @@
+-- data compiled for the purpose of visualisation in Tableau
+
+USE world;
+
+WITH table1 AS (
+SELECT co.code, co.name, co.continent, co.region, co.surfaceArea, co.population, co.LifeExpectancy, CONCAT('$',co.GNP) AS GNP,
+NTILE(100) OVER(ORDER BY lifeExpectancy DESC) AS lf_ptile
+FROM country co
+)
+
+SELECT t1.*, 
+CASE 
+	WHEN lf_ptile <= 20 THEN 'Top 20'
+    WHEN lf_ptile BETWEEN 20 AND 40 THEN '21-40'
+	WHEN lf_ptile BETWEEN 40 AND 60 THEN '41-60'
+	WHEN lf_ptile BETWEEN 60 AND 80 THEN '61-80'
+	ELSE 'Bottom 20'
+END AS Top20
+FROM table1 t1
+ORDER BY GNP DESC;
